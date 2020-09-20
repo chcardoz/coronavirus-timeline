@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom'
 import App from './components/App'
 import data from './data/us-data'
 import * as serviceWorker from './serviceWorker'
+import {Topology} from 'topojson-specification'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App data={data}/>
+    <App data={data} states={data.objects.states}/>
   </React.StrictMode>,
   document.getElementById('root')
 )
