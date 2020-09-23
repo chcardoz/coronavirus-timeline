@@ -7,7 +7,7 @@ import {Topology} from 'topojson-specification'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App data={data} states={data.objects.states}/>
+    <App data={data} states={data.objects.states} counties={data.objects.counties}/>
   </React.StrictMode>,
   document.getElementById('root')
 )
