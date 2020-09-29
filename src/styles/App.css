@@ -1,16 +1,15 @@
 .state {
-    fill: none;
-    stroke: black;
-    stroke-width: .1;
+  fill: none;
+  stroke: black;
+  stroke-width: 0.1;
 }
 
 .county {
-    fill: rgb(218, 233, 255);
-    stroke: #7d7fff;
-    stroke-width: .5;
-    transition: 100ms;
+  stroke: #7d7fff;
+  stroke-width: 0.5;
+  transition: 100ms;
 }
 
 .county:hover {
-    fill: #7d7fff;
+  fill: #7d7fff;
 }
