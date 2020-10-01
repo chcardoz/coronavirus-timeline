@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import * as topojson from "topojson"
 import { Topology, GeometryCollection } from "topojson-specification"
 import { FeatureCollection } from "geojson"
 import "../styles/App.css"
 import Map from "./Map"
 import { csv, DSVRowArray } from "d3"
-import US from "./Map"
 
 interface Props {
   data: unknown
@@ -19,7 +18,6 @@ const App: React.FC<Props> = (props) => {
   const initialState: CSVData = null
   const [fetchedCSVData, setFetchedCSVdata] = useState<CSVData>(initialState)
 
-  const svgRef = useRef<SVGSVGElement | null>(null)
   const stateFeatures: FeatureCollection = topojson.feature(
     props.data as Topology,
     props.states as GeometryCollection
@@ -39,7 +37,6 @@ const App: React.FC<Props> = (props) => {
 
   return (
     <div className="App">
-      <svg ref={svgRef} />
       <Map
         states={stateFeatures}
         counties={countyFeatures}

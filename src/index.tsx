@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import App from "./components/App"
 import data from "./data/us-data"
 import * as serviceWorker from "./serviceWorker"
-import { Topology } from "topojson-specification"
 
 ReactDOM.render(
   <App
