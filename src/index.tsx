@@ -1,15 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import App from "./components/App"
-import data from "./data/us-data"
 import * as serviceWorker from "./serviceWorker"
 
 ReactDOM.render(
-  <App
-    data={data}
-    states={data.objects.states}
-    counties={data.objects.counties}
-  />,
+  <App/>,
   document.getElementById("root")
 )
 

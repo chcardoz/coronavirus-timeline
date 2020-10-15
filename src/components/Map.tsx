@@ -1,103 +1,78 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useState, useEffect, useRef } from "react";
 import {
   geoPath,
-  geoAlbersUsa,
   select,
+  geoAlbersUsa,
+  csv,
+  DSVRowArray,
   scaleLinear,
-  range,
-  scaleOrdinal,
-} from "d3"
-import { FeatureCollection } from "geojson"
-import { DSVRowArray, DSVRowString } from "d3"
+  scalePow
+} from "d3";
+import * as topojson from "topojson";
+import { Topology, GeometryCollection } from "topojson-specification";
+import { FeatureCollection } from "geojson";
+import topojsonData from "../data/us-data";
 
-type CSVData = DSVRowArray
+//the features of the counties
+const countyFeatures: FeatureCollection = topojson.feature(
+  (topojsonData as unknown) as Topology,
+  topojsonData.objects.counties as GeometryCollection
+);
+//type of projection to use
+const projection = geoAlbersUsa().scale(1000);
+//color scale for map
+const colorLinearScale = scaleLinear<string>()
+  .domain([0, 10])
+  .range(["white", "red"]);
+const colorPowerScale = scalePow<string>()
+  .domain([0, 10])
+  .exponent(1.18)
+  .range(["white", "red"]);
 
-interface Margin {
-  top: number
-  left: number
-  right: number
-  bottom: number
-}
-
-interface Props {
-  states: FeatureCollection
-  counties: FeatureCollection
-  confirmedCases: CSVData
-}
-
-const Map: React.FC<Props> = (props) => {
-  const svgRef = useRef<SVGSVGElement | null>(null)
-  const margin: Margin = { top: 0, left: 0, right: 0, bottom: 0 }
-  const height: number = 500 - margin.top - margin.bottom
-  const width: number = 800 - margin.left - margin.right
-  const initialState: Object = null
-  const [confirmed, setConfirmed] = useState(initialState)
-
-  if (props.confirmedCases != null) {
-    setConfirmed(
-      props.confirmedCases.reduce((accumulator, d) => {
-        if (d.countyFIPS != null) accumulator[d.countyFIPS] = d["9/1/20"]
-        return accumulator
-      }, {})
-    )
-  }
-
-  const projection = geoAlbersUsa()
-    .translate([width / 2, height / 2])
-    .scale(1000)
+const Map = () => {
+  const [data, setData] = useState<any>();
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  let dataCallBack = (date: string, data: DSVRowArray<string>) => {
+    let formattedData = data.reduce((acc, cur) => {
+      acc[cur.countyFIPS!] = cur[date];
+      return acc;
+    });
+    return formattedData;
+  };
 
   useEffect(() => {
-    console.log(confirmed)
-    //console.log(parseInt(confirmed[1001]))
-    //console.log(Object.keys(confirmed).length)
-
-    const linearScale = scaleLinear<string>()
-      .domain([0, 0.5, 1])
-      .range(["#efebeb", "#4d4d4d", "#ff5d5d"])
-
-    // const colorArray = range(confirmed.length).map((d) =>
-    //   linearScale(d / (confirmed.length - 1))
-    // )
-    //const ordinalScale = scaleOrdinal().domain(confirmed).range(colorArray)
-
-    const path = geoPath().projection(projection)
-    const svg = select(svgRef.current)
-
-    svg
-      .attr("height", height + margin.top + margin.bottom)
-      .attr("width", width + margin.left + margin.right)
+    const path = geoPath().projection(projection);
+    const svg = select(svgRef.current);
+    svg.attr("height", 800).attr("width", 1000);
 
     svg
       .append("g")
       .selectAll(".county")
-      .data(props.counties.features)
+      .data(countyFeatures.features)
       .enter()
       .append("path")
       .attr("class", "county")
       .attr("d", path)
-    // .attr("fill", (d) => {
-    //   if (d.id != null) {
-    //     return ordina(confirmed[d.id])
-    //   } else {
-    //     return "red"
-    //   }
-    // })
+      .attr("fill", (d) => {
+        console.log(colorLinearScale(8));
+        console.log(colorPowerScale(8));
+        return colorLinearScale(parseInt(data[d.id], 10)) as string;
+      });
+  }, [data]);
 
-    svg
-      .append("g")
-      .selectAll(".state")
-      .data(props.states.features)
-      .enter()
-      .append("path")
-      .attr("class", "state")
-      .attr("d", path)
-  })
+  useEffect(() => {
+    csv("/covid_confirmed.csv").then((counties) =>
+      setData(
+        (dataCallBack("9/18/20", counties) as unknown) as DSVRowArray<string>
+      )
+    );
+  }, []);
 
   return (
-    <div className="Map">
+    <div>
       <svg ref={svgRef} />
     </div>
-  )
-}
+  );
+};
 
-export default Map
+export default Map;
