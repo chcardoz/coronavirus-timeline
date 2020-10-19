@@ -5,8 +5,6 @@
 }
 
 .county {
-  stroke: #7d7fff;
-  stroke-width: 0.5;
   transition: 100ms;
 }
 
