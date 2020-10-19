@@ -1,13 +1,3 @@
-.state {
-  fill: none;
-  stroke: black;
-  stroke-width: 0.1;
-}
-
-.county {
-  transition: 100ms;
-}
-
-.county:hover {
-  fill: #7d7fff;
+.App {
+  margin: auto;
 }
