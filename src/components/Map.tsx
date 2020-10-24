@@ -12,14 +12,17 @@ import * as topojson from "topojson"
 import { Topology, GeometryCollection } from "topojson-specification"
 import { FeatureCollection } from "geojson"
 import topojsonData from "../data/us-data"
+import "../styles/Map.css"
 
 //the features of the counties
 const countyFeatures: FeatureCollection = topojson.feature(
   (topojsonData as unknown) as Topology,
   topojsonData.objects.counties as GeometryCollection
 )
+//scaling factor
+const scalingFactor = 1125
 //type of projection to use
-const projection = geoAlbersUsa().scale(400)
+const projection = geoAlbersUsa().scale(scalingFactor)
 //color scale for map
 const colorScale = scaleThreshold<number, string>()
   .domain([10, 100, 500, 1000, 5000, 10000, 50000, 100000, 500000])
@@ -52,11 +55,12 @@ const Map: FC<Props> = (props) => {
   useEffect(() => {
     const path = geoPath().projection(projection)
     const svg = select(svgRef.current)
-    svg.attr("height", 500).attr("width", 500)
+    svg
+      .attr("height", 0.4537 * scalingFactor)
+      .attr("width", 0.7806 * scalingFactor)
 
     svg
       .append("g")
-      .attr("transform", "translate(0,0)")
       .selectAll(".county")
       .data(countyFeatures.features)
       .enter()
@@ -82,8 +86,8 @@ const Map: FC<Props> = (props) => {
   }, [formattedDate])
 
   return (
-    <div>
-      <svg ref={svgRef} />
+    <div className="Map">
+      <svg className="Us" ref={svgRef} />
     </div>
   )
 }

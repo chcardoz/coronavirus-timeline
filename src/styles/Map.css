@@ -1,0 +1,13 @@
+.Us {
+  transform: scale(0.9);
+  box-shadow: 1px 12px 15px 1px #00000038;
+  border-radius: 30px;
+  padding: 40px;
+  text-align: center;
+  background-color: whitesmoke;
+}
+
+.Map {
+  text-align: center;
+  box-shadow: 0ex;
+}
